@@ -81,12 +81,12 @@
 
 > Add your screenshots here:
 > 
-> ```
+
 > docs/screenshots/dashboard-dark.png
 > docs/screenshots/dashboard-light.png
 > docs/screenshots/missions.png
 > docs/screenshots/duel.png
-> ```
+
 
 ---
 
