@@ -171,18 +171,6 @@ cp -r AirlineInfoPulse/ /path/to/phpvms/modules/AirlineInfoPulse/
 
 > ⚠️ Kein doppelter Ordner: `modules/AirlineInfoPulse/AirlineInfoPulse/` ist **falsch**.
 
-#### Modul aktivieren
-
-Öffne `modules_statuses.json` im phpVMS Root-Verzeichnis und füge hinzu:
-
-```json
-{
-    "AirlineInfoPulse": true
-}
-```
-
-> Falls die Datei bereits existiert, füge `"AirlineInfoPulse": true` mit einem Komma nach dem letzten Eintrag ein.
-
 #### Cache leeren
 
 **Mit SSH:**
