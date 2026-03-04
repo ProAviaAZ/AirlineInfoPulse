@@ -82,7 +82,7 @@
     <div class="ap-mission-card" data-accent="landing">
       <div class="ap-mission-icon ic-landing"><i class="ph-fill ph-gauge"></i></div>
       <div class="ap-mission-title">{{ $t('personal_record') }}</div>
-      <div class="ap-mission-value">{{ (int)$m['best_landing'] }} <span style="font-size:0.55em;font-weight:600;opacity:.6;">fpm</span></div>
+      <div class="ap-mission-value">−{{ (int)$m['best_landing'] }} <span style="font-size:0.55em;font-weight:600;opacity:.6;">fpm</span></div>
       <div class="ap-mission-sub">{{ $t('softest_landing') }}</div>
     </div>
   @endif

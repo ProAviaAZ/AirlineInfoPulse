@@ -171,6 +171,18 @@ cp -r AirlineInfoPulse/ /path/to/phpvms/modules/AirlineInfoPulse/
 
 > ⚠️ Kein doppelter Ordner: `modules/AirlineInfoPulse/AirlineInfoPulse/` ist **falsch**.
 
+#### Modul aktivieren
+
+Öffne `modules_statuses.json` im phpVMS Root-Verzeichnis und füge hinzu:
+
+```json
+{
+    "AirlineInfoPulse": true
+}
+```
+
+> Falls die Datei bereits existiert, füge `"AirlineInfoPulse": true` mit einem Komma nach dem letzten Eintrag ein.
+
 #### Cache leeren
 
 **Mit SSH:**
@@ -572,6 +584,13 @@ Contributions are welcome! Please:
 
 ## 📝 Changelog
 
+### v1.1.1 — Hotfix
+
+- **Landing rate display** — "Personal Record" mission now shows a proper negative value (−48 fpm) instead of a confusing positive one (48 fpm). The internal query uses `ABS()` for correct comparison, but the display now prepends the minus sign pilots expect. Same fix applied to Pilot Duel bars and comparison table.
+- **Maintenance feed date filter** — Old maintenance events (e.g., a Soft Landing Check from months ago) no longer appear in today's feed. The filter now uses the actual check timestamp (`last_time`) instead of the record's `updated_at`, which DisposableSpecial updates whenever it recalculates flight hours/cycles.
+
+---
+
 ### v1.1.0 — Bugfixes, Unit System & Pilot Guide
 
 #### 🐛 Bugfixes
@@ -579,6 +598,7 @@ Contributions are welcome! Please:
 - **Softest Landing detection** — Fixed `MAX(landing_rate)` returning the *hardest* landing instead of the softest. Now uses `MIN(CASE WHEN ABS(landing_rate) >= threshold ...)` to correctly find the smallest absolute value. Works with both positive and negative ACARS values.
 - **Default filter changed** — Dashboard now loads with "Today" filter instead of "Week" (updated in 4 locations).
 - **Config `min_landing_rate` accepts negative values** — `abs()` is now applied on read, so entering `-75` or `75` produces the same result.
+- **Maintenance feed date mismatch** — Old maintenance events (e.g., from months ago) appeared in today's feed because the filter used `updated_at` while the display used `last_time`. Now both use the same column.
 
 #### 🆕 New Features
 
@@ -644,6 +664,16 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 ### 🧑‍✈️ Contributors & Testers
 
 - **[@ProAvia](https://github.com/ProAvia)** — Testing, bug reports, and feature ideas (unit system, fuel/hour metric, landing rate threshold, GDPR name shortening, Pilot Guide improvements)
+
+---
+
+## 💚 Support This Project
+
+If Airline Info Pulse is useful to your virtual airline, consider buying me a coffee! Every donation helps fund continued development, new features, and bug fixes.
+
+[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=7QEUD3PZLZPV2)
+
+> You can also click the **💜 Sponsor** button at the top of this repository page.
 
 ---
 

@@ -895,12 +895,15 @@ class AirlineInfoPulseController extends Controller
                 $mxSelect[] = 'subfleets.'.$sfTypeCol.' as sf_type';
             }
 
-            // Filtern: last_note nicht leer UND updated_at im Zeitraum
+            // Filtern: last_note nicht leer UND Timestamp im Zeitraum
+            // Wichtig: Filter muss dieselbe Spalte nutzen wie die Anzeige ($tsCol),
+            // sonst erscheinen alte Checks im Feed wenn DisposableSpecial updated_at ändert
+            $filterCol = $mxTbl.'.'.$tsCol;
             $mxQ = DB::table($mxTbl)
                 ->whereNotNull($mxTbl.'.last_note')
                 ->where($mxTbl.'.last_note', '!=', '')
-                ->whereBetween($mxTbl.'.updated_at', [$range['start'], $range['end']])
-                ->orderByDesc($mxTbl.'.updated_at')
+                ->whereBetween($filterCol, [$range['start'], $range['end']])
+                ->orderByDesc($filterCol)
                 ->limit($limit);
 
             if ($this->schemaHasTable('aircraft')) {

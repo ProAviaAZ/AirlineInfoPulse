@@ -600,7 +600,7 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
       var mA=Math.abs(mvN),rA=Math.abs(rvN),total=mA+rA||1;
       var mP=Math.round((mA/total)*100),rP=100-mP;
       var mC=tie?'tie':(meWin?'win':'lose'),rC=tie?'tie':(meWin?'lose':'win');
-      bar.innerHTML='<div class="ap-duel-row"><span class="ap-duel-val '+mC+'">'+mvN+'</span><div class="ap-duel-track"><div class="ap-duel-fill-me" style="width:'+mP+'%"></div><div class="ap-duel-fill-rival" style="width:'+rP+'%"></div></div><span class="ap-duel-val '+rC+'">'+rvN+'</span></div>';
+      bar.innerHTML='<div class="ap-duel-row"><span class="ap-duel-val '+mC+'">'+(cfg.key==='bestLanding'&&mvN?'-':'')+mvN+'</span><div class="ap-duel-track"><div class="ap-duel-fill-me" style="width:'+mP+'%"></div><div class="ap-duel-fill-rival" style="width:'+rP+'%"></div></div><span class="ap-duel-val '+rC+'">'+(cfg.key==='bestLanding'&&rvN?'-':'')+rvN+'</span></div>';
       card.appendChild(bar);
     });
 
@@ -624,7 +624,9 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
         var rCls=tie?'':(meWin?'ap-ct-lose':'ap-ct-win');
         var icon=tie?'🤝':(meWin?'✅':'❌');
         var tr=document.createElement('tr');
-        tr.innerHTML='<td style="color:var(--ap-text);font-family:var(--ap-font-head);font-weight:600;">'+cfg.label+'</td><td style="text-align:right;" class="'+mCls+'">'+mvN+'</td><td class="ap-ct-icon">'+icon+'</td><td class="'+rCls+'">'+rvN+'</td>';
+        var fmtMv=cfg.key==='bestLanding'&&mvN?'-'+mvN:mvN;
+        var fmtRv=cfg.key==='bestLanding'&&rvN?'-'+rvN:rvN;
+        tr.innerHTML='<td style="color:var(--ap-text);font-family:var(--ap-font-head);font-weight:600;">'+cfg.label+'</td><td style="text-align:right;" class="'+mCls+'">'+fmtMv+'</td><td class="ap-ct-icon">'+icon+'</td><td class="'+rCls+'">'+fmtRv+'</td>';
         tbody.appendChild(tr);
       });
     }
