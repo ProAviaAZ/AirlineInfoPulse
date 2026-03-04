@@ -20,6 +20,8 @@ class AirlineInfoPulseController extends Controller
     private $allAirlines;
     private $airCols = [];
     private $pfx;
+    private $units;
+    private $minLdg;
     private static $schemaCache = []; // Schema-Calls cachen (pro Request)
 
     // Erlaubte Filter-Werte (Whitelist)
@@ -29,6 +31,8 @@ class AirlineInfoPulseController extends Controller
     {
         $this->co2Factor = config('airlineinfopulse.co2_factor', 3.16);
         $this->pfx = DB::getTablePrefix();
+        $this->units = PulseHelper::getUnits();
+        $this->minLdg = abs((int) config('airlineinfopulse.min_landing_rate', 10));
 
         // Airlines einmalig cachen (bereits gecacht durch Laravel's Query Cache im selben Request)
         $this->allAirlines = Airline::all()->keyBy('id');
@@ -109,7 +113,7 @@ class AirlineInfoPulseController extends Controller
     public function index(Request $request)
     {
         // Input-Validierung — Whitelist für filter
-        $filter = in_array($request->get('filter'), self::VALID_FILTERS) ? $request->get('filter') : 'week';
+        $filter = in_array($request->get('filter'), self::VALID_FILTERS) ? $request->get('filter') : 'today';
 
         // Custom-Dates sicher parsen (nur Y-m-d akzeptieren)
         $customStart = null;
@@ -121,7 +125,7 @@ class AirlineInfoPulseController extends Controller
                 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawStart)) $customStart = $rawStart;
                 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawEnd)) $customEnd = $rawEnd;
             } catch (\Throwable $e) {
-                $filter = 'week'; // Fallback bei ungültigen Dates
+                $filter = 'today'; // Fallback bei ungültigen Dates
             }
         }
 
@@ -176,6 +180,12 @@ class AirlineInfoPulseController extends Controller
         $snapshot     = $this->getAirlineSnapshot($range);
         $prevSnapshot = $this->getAirlineSnapshot($prevRange);
 
+        // GDPR helper: "Dan Evans" → "Dan E."
+        $shortName = fn(?string $name) => PulseHelper::shortName($name);
+
+        // Unit config for views (reads phpVMS Admin settings)
+        $units = $this->units;
+
         return view('airlineinfopulse::index', compact(
             'filter', 'customStart', 'customEnd', 'pilotSort', 'acSort',
             'showAllPilots', 'showAllAc',
@@ -186,8 +196,29 @@ class AirlineInfoPulseController extends Controller
             'topAircraft', 'topAircraftAll', 'acExtras',
             'quickstartJson',
             'feed', 'snapshot', 'prevSnapshot',
-            'user'
+            'user', 'shortName', 'units'
         ));
+    }
+
+    /**
+     * Pilot Guide page
+     */
+    public function guide()
+    {
+        $units = $this->units;
+
+        // Config values for dynamic guide content
+        $guideConfig = [
+            'ldg_green'       => abs((int) config('airlineinfopulse.landing_rate_thresholds.green', -299)),
+            'ldg_orange'      => abs((int) config('airlineinfopulse.landing_rate_thresholds.orange', -499)),
+            'daily_goal_h'    => round(config('airlineinfopulse.daily_goal_minutes', 240) / 60, 1),
+            'daily_goal_min'  => (int) config('airlineinfopulse.daily_goal_minutes', 240),
+            'co2_factor'      => (float) config('airlineinfopulse.co2_factor', 3.16),
+            'min_landing_rate'=> $this->minLdg,
+            'daily_goal_flights' => (int) config('airlineinfopulse.daily_challenge_flights', 3),
+        ];
+
+        return view('airlineinfopulse::guide', compact('units', 'guideConfig'));
     }
 
     /**
@@ -207,14 +238,15 @@ class AirlineInfoPulseController extends Controller
         $q = DB::table('pireps')->where('user_id', $cpId)->where('state', PirepState::ACCEPTED);
 
         // Lifetime aggregate
-        $lt = (clone $q)->selectRaw('
+        $minLdg = $this->minLdg;
+        $lt = (clone $q)->selectRaw("
             COUNT(*) as flights,
-            MAX(landing_rate) as best_ldg,
+            MIN(CASE WHEN landing_rate != 0 AND ABS(landing_rate) >= ? THEN ABS(landing_rate) ELSE NULL END) as best_ldg,
             MAX(distance) as max_dist,
             COUNT(DISTINCT aircraft_id) as ac_types,
             COUNT(DISTINCT airline_id) as airlines_flown,
             SUM(CASE WHEN DAYOFWEEK(submitted_at) IN (1,7) THEN 1 ELSE 0 END) as weekend
-        ')->first();
+        ", [$minLdg])->first();
 
         $flights = $lt ? (int) $lt->flights : 0;
 
@@ -252,7 +284,7 @@ class AirlineInfoPulseController extends Controller
         $weekend = $lt ? (int) $lt->weekend : 0;
 
         return response()->json([
-            'name'           => $cpUser->name ?? ('Pilot #' . $cpId),
+            'name'           => PulseHelper::shortName($cpUser->name ?? null),
             'user_id'        => $cpId,
             'streak'         => $streak,
             'flights'        => $flights,
@@ -263,7 +295,7 @@ class AirlineInfoPulseController extends Controller
             'acTypes'        => $lt ? (int) $lt->ac_types : 0,
             'bestLanding'    => $lt ? $lt->best_ldg : null,
             'todayFlights'   => $todayFlights,
-            'longestDist'    => $lt ? (float) ($lt->max_dist ?? 0) : 0,
+            'longestDist'    => $lt ? round((float) ($lt->max_dist ?? 0) * $this->units['distance_factor'], 1) : 0,
             'airlinesFlown'  => $lt ? (int) $lt->airlines_flown : 0,
             'weekendFlights' => $weekend,
             'weekendPct'     => $flights > 0 ? round(($weekend / $flights) * 100) : 0,
@@ -359,14 +391,16 @@ class AirlineInfoPulseController extends Controller
         $q = DB::table('pireps')->where('user_id', $userId)->where('state', PirepState::ACCEPTED);
 
         // Single aggregate query for all lifetime stats
-        $lt = (clone $q)->selectRaw('
+        // Softest landing: smallest ABS value above min_landing_rate threshold
+        $minLdg = $this->minLdg;
+        $lt = (clone $q)->selectRaw("
             COUNT(*) as flights,
-            MAX(landing_rate) as best_ldg,
+            MIN(CASE WHEN landing_rate != 0 AND ABS(landing_rate) >= ? THEN ABS(landing_rate) ELSE NULL END) as best_ldg,
             MAX(distance) as max_dist,
             COUNT(DISTINCT aircraft_id) as ac_types,
             COUNT(DISTINCT airline_id) as airlines_flown,
             SUM(CASE WHEN DAYOFWEEK(submitted_at) IN (1,7) THEN 1 ELSE 0 END) as weekend
-        ')->first();
+        ", [$minLdg])->first();
 
         $totalFlights = $lt ? (int) $lt->flights : 0;
 
@@ -447,9 +481,9 @@ class AirlineInfoPulseController extends Controller
             ->map(function ($r) use ($users) {
                 $u = $users->get($r->user_id);
                 if (!$u) return null;
-                $name = $u->name ?? ('Pilot #' . $r->user_id);
+                $name = PulseHelper::shortName($u->name ?? null);
                 $ident = $u->ident ?? ($u->pilot_id ?? null);
-                if ($ident && $ident !== $name) $name .= " ($ident)";
+                if ($ident && $ident !== ($u->name ?? '')) $name .= " ($ident)";
                 return ['id' => $r->user_id, 'name' => $name, 'flights' => $r->flights];
             })->filter()->values()->toArray();
     }
@@ -575,16 +609,19 @@ class AirlineInfoPulseController extends Controller
         $aircraft = $rows->map(function ($row) use ($acMap) {
             $totalFuel = (float) $row->total_fuel;
             $totalDist = (float) $row->total_distance;
+            $blockMin  = (int) $row->block_time;
             $fuelPerNm = $totalDist > 0 ? round($totalFuel / $totalDist, 2) : 0;
+            $fuelPerHr = $blockMin > 0 ? round(($totalFuel / $blockMin) * 60, 1) : 0;
 
             return [
                 'aircraft_id'      => $row->aircraft_id,
                 'aircraft'         => $acMap->get($row->aircraft_id),
                 'flights'          => (int) $row->flights,
-                'block_time'       => (int) $row->block_time,
+                'block_time'       => $blockMin,
                 'total_fuel'       => round($totalFuel, 1),
                 'total_distance'   => round($totalDist, 1),
                 'fuel_per_nm'      => $fuelPerNm,
+                'fuel_per_hour'    => $fuelPerHr,
                 'co2'              => round($totalFuel * $this->co2Factor, 1),
                 'avg_landing_rate' => round((float) $row->avg_landing_rate, 1),
             ];
@@ -759,7 +796,7 @@ class AirlineInfoPulseController extends Controller
         })->values()->toArray();
     }
 
-    private function getFeed(array $range, string $filter = 'week'): array
+    private function getFeed(array $range, string $filter = 'today'): array
     {
         // Dynamische Limits je nach Zeitraum
         $baseLimits = [
@@ -799,7 +836,7 @@ class AirlineInfoPulseController extends Controller
                 'type' => 'pirep',
                 'data' => [
                     'id'            => $p->id,
-                    'pilot_name'    => $u->name ?? 'Pilot',
+                    'pilot_name'    => PulseHelper::shortName($u->name ?? null),
                     'pilot_id'      => $p->user_id,
                     'airline_name'  => $this->airVal($p, 'name'),
                     'airline_icao'  => $airIcao,
@@ -822,7 +859,7 @@ class AirlineInfoPulseController extends Controller
             $feed->push([
                 'ts'   => Carbon::parse($u->created_at),
                 'type' => 'user',
-                'data' => ['id' => $u->id, 'name' => $u->name ?? 'Pilot'],
+                'data' => ['id' => $u->id, 'name' => PulseHelper::shortName($u->name ?? null)],
             ]);
         }
 

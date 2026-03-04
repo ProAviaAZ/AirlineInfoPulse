@@ -20,7 +20,7 @@
     <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
       <div class="ap-avatar">{{ strtoupper(substr($user->name ?? 'P', 0, 1)) }}</div>
       <div style="flex:1;min-width:200px;">
-        <div style="font-family:var(--ap-font-head);font-weight:700;font-size:1rem;color:var(--ap-text-head);">{{ $user->name ?? 'Pilot' }}</div>
+        <div style="font-family:var(--ap-font-head);font-weight:700;font-size:1rem;color:var(--ap-text-head);">{{ $shortName($user->name ?? 'Pilot') }}</div>
         <div style="font-size:0.72rem;color:var(--ap-muted);margin-top:2px;">
           {{ $favourites['airline']->name ?? '—' }}
           <span style="margin:0 6px;opacity:.4;">·</span>
@@ -52,13 +52,13 @@
       <div class="col-6 col-sm-4 col-lg-2">
         <div class="ap-my-kpi">
           <div class="ap-my-kpi-label"><i class="ph-fill ph-ruler me-1"></i>{{ $t('distance') }}</div>
-          <div class="ap-my-kpi-val ap-mono" style="font-size:1rem;">{{ number_format($cockpit['distance'], 0, '', ' ') }} NM</div>
+          <div class="ap-my-kpi-val ap-mono" style="font-size:1rem;">{{ number_format($cockpit['distance'] * $units['distance_factor'], 0, '', ' ') }} {{ $units['distance_label'] }}</div>
         </div>
       </div>
       <div class="col-6 col-sm-4 col-lg-2">
         <div class="ap-my-kpi">
           <div class="ap-my-kpi-label"><i class="ph-fill ph-gas-pump me-1"></i>{{ $t('fuel') }}</div>
-          <div class="ap-my-kpi-val ap-mono" style="font-size:1rem;">{{ number_format($cockpit['fuel'], 0, '', ' ') }} kg</div>
+          <div class="ap-my-kpi-val ap-mono" style="font-size:1rem;">{{ number_format($cockpit['fuel'] * $units['fuel_factor'], 0, '', ' ') }} {{ $units['fuel_label'] }}</div>
         </div>
       </div>
       <div class="col-6 col-sm-4 col-lg-2">

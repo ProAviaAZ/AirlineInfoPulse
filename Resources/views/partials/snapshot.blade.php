@@ -67,7 +67,7 @@
               <div class="d-flex flex-wrap gap-x-3 gap-y-1" style="font-family:var(--ap-font-mono);font-size:0.68rem;">
                 <span style="color:var(--ap-muted);"><i class="ph-fill ph-clock-countdown me-1" style="color:var(--ap-violet);"></i>{{ $fmtMin($s['block_time']) }}</span>
                 @if($s['distance'] > 0)
-                  <span style="color:var(--ap-muted);"><i class="ph-fill ph-ruler me-1" style="color:var(--ap-cyan);"></i>{{ number_format($s['distance'], 0, '', ' ') }} NM</span>
+                  <span style="color:var(--ap-muted);"><i class="ph-fill ph-ruler me-1" style="color:var(--ap-cyan);"></i>{{ number_format($s['distance'] * $units['distance_factor'], 0, '', ' ') }} {{ $units['distance_label'] }}</span>
                 @endif
                 @if(!is_null($ldg))
                   <span class="{{ $landingClass($ldg) }}"><i class="ph-fill ph-gauge me-1"></i>Ø {{ $ldg }} fpm</span>

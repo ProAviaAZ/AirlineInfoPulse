@@ -15,13 +15,13 @@
   <div class="ap-kpi" data-type="dist">
     <div class="ap-kpi-icon"><i class="ph-fill ph-ruler"></i></div>
     <div class="ap-kpi-label">{{ $t('distance') }}</div>
-    <div class="ap-kpi-value" style="font-size:1.2rem;">{{ number_format($kpis['distance'], 0, '', ' ') }} <span style="font-size:.7em;opacity:.7;">NM</span> {!! $fmtDelta($kpiDeltas['distance'] ?? null) !!}</div>
+    <div class="ap-kpi-value" style="font-size:1.2rem;">{{ number_format($kpis['distance'] * $units['distance_factor'], 0, '', ' ') }} <span style="font-size:.7em;opacity:.7;">{{ $units['distance_label'] }}</span> {!! $fmtDelta($kpiDeltas['distance'] ?? null) !!}</div>
   </div>
 
   <div class="ap-kpi" data-type="fuel">
     <div class="ap-kpi-icon"><i class="ph-fill ph-gas-pump"></i></div>
     <div class="ap-kpi-label">{{ $t('fuel') }}</div>
-    <div class="ap-kpi-value" style="font-size:1.2rem;">{{ number_format($kpis['fuel'], 0, '', ' ') }} <span style="font-size:.7em;opacity:.7;">kg</span> {!! $fmtDelta($kpiDeltas['fuel'] ?? null) !!}</div>
+    <div class="ap-kpi-value" style="font-size:1.2rem;">{{ number_format($kpis['fuel'] * $units['fuel_factor'], 0, '', ' ') }} <span style="font-size:.7em;opacity:.7;">{{ $units['fuel_label'] }}</span> {!! $fmtDelta($kpiDeltas['fuel'] ?? null) !!}</div>
   </div>
 
   <div class="ap-kpi" data-type="ldg">

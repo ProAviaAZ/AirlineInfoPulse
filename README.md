@@ -79,14 +79,17 @@
 
 ## 📸 Screenshots
 
-> Add your screenshots here:
-> 
-> ```
-> docs/screenshots/dashboard-dark.png
-> docs/screenshots/dashboard-light.png
-> docs/screenshots/missions.png
-> docs/screenshots/duel.png
-> ```
+### Dark Mode
+![Dashboard Dark](docs/screenshots/dashboard-dark.png)
+
+### Light Mode
+![Dashboard Light](docs/screenshots/dashboard-light.png)
+
+### Missions & Gamification
+![Missions](docs/screenshots/missions.png)
+
+### Pilot Duel
+![Duel](docs/screenshots/duel.png)
 
 ---
 
@@ -581,6 +584,43 @@ Contributions are welcome! Please:
 
 ## 📝 Changelog
 
+### v1.1.0 — Bugfixes, Unit System & Pilot Guide
+
+#### 🐛 Bugfixes
+
+- **Softest Landing detection** — Fixed `MAX(landing_rate)` returning the *hardest* landing instead of the softest. Now uses `MIN(CASE WHEN ABS(landing_rate) >= threshold ...)` to correctly find the smallest absolute value. Works with both positive and negative ACARS values.
+- **Default filter changed** — Dashboard now loads with "Today" filter instead of "Week" (updated in 4 locations).
+- **Config `min_landing_rate` accepts negative values** — `abs()` is now applied on read, so entering `-75` or `75` produces the same result.
+
+#### 🆕 New Features
+
+- **Dynamic Unit System** — All distances (NM/km/mi), fuel/weight (kg/lbs), and efficiency labels automatically adapt to phpVMS Admin → Settings. Zero hardcoded unit strings in any view file.
+- **Fuel per Hour** (`kg/h` / `lbs/h`) — New efficiency metric on each Top Aircraft card, calculated as `total_fuel / block_hours`.
+- **GDPR / DSGVO Name Shortening** — Pilot names displayed as "First L." (e.g., "Thomas K.") in all public-facing sections: Top Lists, Activity Feed, Pilot Duel. Implemented via `PulseHelper::shortName()`.
+- **Pilot Guide page** (`/airline-info-pulse/guide`) — Fully bilingual in-app documentation with 13 sections, interactive table of contents, and dynamic values from config (landing rate thresholds, daily goal, CO₂ factor, units). Linked from the dashboard via a ❓ icon next to the title.
+- **Configurable landing rate threshold** — New `min_landing_rate` config option (default: 5 fpm). Landings with `ABS(landing_rate) < threshold` are excluded from "Softest Landing" / "Personal Record". Extensively documented in config with examples table.
+- **Phosphor Icons self-loading** — Module now loads Phosphor Icons via CDN, ensuring compatibility with any theme (e.g., DisposableTheme which only ships FontAwesome 5.x).
+
+#### 🌍 Translation Updates
+
+- 251 translation keys per language (DE + EN), up from ~130 in v1.0.0
+- All Pilot Guide content fully translatable — no hardcoded text
+- New keys for: units, GDPR, fuel/hour, guide sections, FAQ entries
+
+#### 📁 Files Changed
+
+- `Config/config.php` — Added unit overrides, `min_landing_rate` with comprehensive documentation, updated comments
+- `Helpers/PulseHelper.php` — Added `getUnits()`, `shortName()`, unit conversion methods
+- `Http/Controllers/AirlineInfoPulseController.php` — Unit system integration, `guide()` method, softest landing fix, `abs()` on config read
+- `Http/Routes/web.php` — Added `/guide` route
+- `Resources/views/guide.blade.php` — New: fully bilingual Pilot Guide page
+- `Resources/views/index.blade.php` — Guide link, Phosphor Icons CDN, dynamic units
+- `Resources/views/partials/*.blade.php` — Dynamic unit labels in all 6 partial views
+- `Resources/lang/en/pulse.php` — 120+ new keys
+- `Resources/lang/de/pulse.php` — 120+ new keys
+
+---
+
 ### v1.0.0 — Initial Release
 
 - KPI Dashboard with 6 metrics and trend comparison
@@ -612,6 +652,10 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 - **[DisposableBasic](https://github.com/FatihKoz/DisposableBasic)** — Optional module for maintenance data and widgets
 - **[Phosphor Icons](https://phosphoricons.com/)** — Icon set used throughout the dashboard
 - **[Bootstrap 5](https://getbootstrap.com/)** — Grid system and utility classes
+
+### 🧑‍✈️ Contributors & Testers
+
+- **[@ProAvia](https://github.com/ProAvia)** — Testing, bug reports, and feature ideas (unit system, fuel/hour metric, landing rate threshold, GDPR name shortening, Pilot Guide improvements)
 
 ---
 

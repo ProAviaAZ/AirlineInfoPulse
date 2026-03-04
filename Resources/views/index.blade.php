@@ -59,6 +59,7 @@ $fullAcName = function($ac) {
 
 @section('content')
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2/src/fill/style.css" rel="stylesheet">
 
 {{-- ═══ Theme detection — adds .ap-light / .ap-dark to <html> ═══ --}}
 <script>
@@ -414,6 +415,7 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
         <div style="display:flex;align-items:center;gap:10px;">
           <i class="ph-fill ph-wave-sine" style="color:var(--ap-cyan);font-size:1.4rem;"></i>
           <h1 class="ap-page-title mb-0">{{ $t('title') }}</h1>
+          <a href="{{ url('/airline-info-pulse/guide') }}" title="{{ $t('pilot_guide') }}" style="color:var(--ap-muted);font-size:1.1rem;transition:color .2s;" onmouseover="this.style.color='var(--ap-cyan)'" onmouseout="this.style.color='var(--ap-muted)'"><i class="ph-fill ph-question"></i></a>
         </div>
         <div class="ap-section-label mt-1">{{ now()->format('d. M. Y') }} · {{ $tfNice }}</div>
       </div>
@@ -543,7 +545,7 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
     acTypes:{{ $missions['aircraft_types'] ?? 0 }},
     bestLanding:{{ $missions['best_landing'] ?? 'null' }},
     todayFlights:{{ $missions['today_flights'] ?? 0 }},
-    longestDist:{{ $missions['longest_flight'] ?? 0 }},
+    longestDist:{{ round(($missions['longest_flight'] ?? 0) * $units['distance_factor'], 1) }},
     airlinesFlown:{{ $missions['airlines_flown'] ?? 0 }},
     weekendPct:{{ $missions['weekend_pct'] ?? 0 }}
   };
@@ -557,7 +559,7 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
     aircraft:{key:'acTypes',label:_t.fleetTypes,unit:'',higher:true},
     landing:{key:'bestLanding',label:_t.bestLanding,unit:' fpm',higher:false},
     daily:{key:'todayFlights',label:_t.today,unit:' '+_t.nFlights,higher:true},
-    distance:{key:'longestDist',label:_t.longest,unit:' NM',higher:true},
+    distance:{key:'longestDist',label:_t.longest,unit:' {{ $units['distance_label'] }}',higher:true},
     airlines:{key:'airlinesFlown',label:_t.airlines,unit:'',higher:true},
     weekend:{key:'weekendPct',label:_t.weekendPct,unit:'%',higher:true}
   };

@@ -106,7 +106,7 @@
     <div class="ap-mission-card" data-accent="distance">
       <div class="ap-mission-icon ic-distance"><i class="ph-fill ph-path"></i></div>
       <div class="ap-mission-title">{{ $t('longest_flight') }}</div>
-      <div class="ap-mission-value">{{ number_format($m['longest_flight'], 0, '', ' ') }} <span style="font-size:0.55em;font-weight:600;opacity:.6;">NM</span></div>
+      <div class="ap-mission-value">{{ number_format($m['longest_flight'] * $units['distance_factor'], 0, '', ' ') }} <span style="font-size:0.55em;font-weight:600;opacity:.6;">{{ $units['distance_label'] }}</span></div>
       <div class="ap-mission-sub">{{ $m['longest_route'] ?? $t('distance_record') }}</div>
     </div>
   @endif

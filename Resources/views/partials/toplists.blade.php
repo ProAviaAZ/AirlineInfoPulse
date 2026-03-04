@@ -31,7 +31,7 @@
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
               <div>
                 <span class="ap-rank-medal">{{ $medal }}</span>
-                <span class="ap-rank-name"><a href="{{ $mkPilotUrl($pi['user_id']) }}">{{ $u->name ?? ('#'.$pi['user_id']) }}</a></span>
+                <span class="ap-rank-name"><a href="{{ $mkPilotUrl($pi['user_id']) }}">{{ $shortName($u->name ?? null) }}</a></span>
               </div>
               <div class="d-flex flex-wrap gap-1">
                 <span class="ap-tag ap-tag-blue"><i class="ph-fill ph-airplane"></i>{{ $pi['flights'] }}</span>
@@ -138,10 +138,14 @@
                 <span class="ap-tag ap-tag-blue"><i class="ph-fill ph-airplane"></i>{{ $ac['flights'] }}</span>
                 <span class="ap-tag ap-tag-blue"><i class="ph-fill ph-clock-countdown"></i>{{ $fmtMin($ac['block_time']) }}</span>
                 @if($ac['fuel_per_nm'] > 0)
-                  <span class="ap-tag ap-tag-amber"><i class="ph-fill ph-gas-pump"></i>{{ number_format($ac['fuel_per_nm'], 2, ',', '.') }} kg/NM</span>
+                  @php $effVal = ($ac['fuel_per_nm'] * $units['fuel_factor']) / $units['distance_factor']; @endphp
+                  <span class="ap-tag ap-tag-amber"><i class="ph-fill ph-gas-pump"></i>{{ number_format($effVal, 2, ',', '.') }} {{ $units['efficiency_label'] }}</span>
+                @endif
+                @if($ac['fuel_per_hour'] > 0)
+                  <span class="ap-tag ap-tag-amber"><i class="ph-fill ph-timer"></i>{{ number_format($ac['fuel_per_hour'] * $units['fuel_factor'], 0, '', '.') }} {{ $units['fuel_label'] }}/h</span>
                 @endif
                 @if($ac['co2'] > 0)
-                  <span class="ap-tag ap-tag-green"><i class="ph-fill ph-leaf"></i>{{ number_format($ac['co2'] / 1000, 2, ',', '.') }} t CO₂</span>
+                  <span class="ap-tag ap-tag-green"><i class="ph-fill ph-leaf"></i>{{ number_format(($ac['co2'] * $units['fuel_factor']) / 1000, 2, ',', '.') }} t CO₂</span>
                 @endif
               </div>
             </div>
@@ -171,7 +175,7 @@
                       <div class="ap-recent-route">
                         <a href="{{ $mkPirepUrl($rf->id) }}" target="_blank">{{ $rf->dep ?? '—' }} → {{ $rf->arr ?? '—' }}</a>
                         @if($pu)
-                          <span style="color:var(--ap-muted);font-size:0.68rem;"> · <a href="{{ $mkPilotUrl($pu->id) }}" style="color:var(--ap-muted);">{{ $pu->name }}</a></span>
+                          <span style="color:var(--ap-muted);font-size:0.68rem;"> · <a href="{{ $mkPilotUrl($pu->id) }}" style="color:var(--ap-muted);">{{ $shortName($pu->name ?? null) }}</a></span>
                         @endif
                       </div>
                       <div class="d-flex gap-2 align-items-center">
