@@ -9,6 +9,8 @@
       <div class="d-flex gap-1" id="ap-qs-regions">
         <button class="ap-region-btn active" data-region="eu" onclick="apQsFilter('eu',this)">{{ $t('region_eu') }}</button>
         <button class="ap-region-btn" data-region="asia" onclick="apQsFilter('asia',this)">{{ $t('region_asia') }}</button>
+        <button class="ap-region-btn" data-region="africa" onclick="apQsFilter('africa',this)">{{ $t('region_africa') }}</button>
+        <button class="ap-region-btn" data-region="oceania" onclick="apQsFilter('oceania',this)">{{ $t('region_oceania') }}</button>
         <button class="ap-region-btn" data-region="us" onclick="apQsFilter('us',this)">{{ $t('region_us') }}</button>
       </div>
     </div>

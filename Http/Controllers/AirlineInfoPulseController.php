@@ -823,9 +823,12 @@ class AirlineInfoPulseController extends Controller
         $icaoRegion = function ($icao) {
             $icao = strtoupper((string) $icao);
             if (!$icao) return 'other';
-            if (str_starts_with($icao, 'K')) return 'us';
-            if (str_starts_with($icao, 'E') || str_starts_with($icao, 'L') || str_starts_with($icao, 'U')) return 'eu';
-            if (str_starts_with($icao, 'Z') || str_starts_with($icao, 'V') || str_starts_with($icao, 'R') || str_starts_with($icao, 'W') || str_starts_with($icao, 'O')) return 'asia';
+            $p = $icao[0];
+            if ($p === 'K') return 'us';
+            if (in_array($p, ['E', 'L', 'U'])) return 'eu';
+            if (in_array($p, ['Z', 'V', 'R', 'W', 'O'])) return 'asia';
+            if (in_array($p, ['D', 'F', 'G', 'H'])) return 'africa';
+            if (in_array($p, ['A', 'N', 'Y'])) return 'oceania';
             return 'other';
         };
 

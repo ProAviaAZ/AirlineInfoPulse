@@ -62,6 +62,8 @@ return [
     'loading_flights'  => 'Flüge werden geladen…',
     'region_eu'        => 'Europa',
     'region_asia'      => 'Asien',
+    'region_africa'    => 'Afrika',
+    'region_oceania'   => 'Ozeanien',
     'region_us'        => 'USA',
 
     // ── Top Lists ──
@@ -165,7 +167,7 @@ return [
     'guide_access_title'  => 'Zugang',
     'guide_access_text'   => 'Melde dich auf der Website der virtuellen Airline an und klicke auf <strong>Airline Pulse</strong> im Navigationsmenü oder gehe zu <code>/airline-info-pulse</code>. Das Dashboard lädt automatisch mit deinen Daten.',
     'guide_access_note'   => 'Du musst eingeloggt sein. Die Seite ist für Gäste nicht sichtbar.',
-    'guide_access_lang'   => 'Das Dashboard unterstützt <strong>Deutsch</strong> und <strong>Englisch</strong>. Zum Wechseln klicke auf das Flaggen-Symbol in der Navigation deiner VA-Website.',
+    'guide_access_lang'   => 'Das Dashboard unterstützt <strong>Deutsch</strong>, <strong>Englisch</strong>, <strong>Französisch</strong>, <strong>Portugiesisch</strong>, <strong>Spanisch</strong>, <strong>Italienisch</strong>, <strong>Japanisch</strong> und <strong>Türkisch</strong>. Zum Wechseln klicke auf das Flaggen-Symbol in der Navigation deiner VA-Website.',
 
     // Guide: Time Filter
     'guide_filter_title'  => 'Zeitfilter',

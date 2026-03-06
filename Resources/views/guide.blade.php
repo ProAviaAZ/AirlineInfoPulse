@@ -239,9 +239,11 @@ $dailyFlights = $gc['daily_goal_flights'] ?? 3;
       <table class="apg-table">
         <thead><tr><th>{{ $t('guide_qs_region') }}</th><th>{{ $t('guide_qs_prefixes') }}</th></tr></thead>
         <tbody>
-          <tr><td>🇪🇺 <strong>Europe</strong></td><td>E (EGLL, EDDF…), L (LFPG, LIRF…), U (UUEE…)</td></tr>
-          <tr><td>🌏 <strong>Asia</strong></td><td>Z (ZBAA…), V (VHHH…), R (RJTT…), W, O</td></tr>
-          <tr><td>🇺🇸 <strong>USA</strong></td><td>K (KJFK, KLAX…)</td></tr>
+          <tr><td>🇪🇺 <strong>{{ $t('region_eu') }}</strong></td><td>E (EGLL, EDDF…), L (LFPG, LIRF…), U (UUEE…)</td></tr>
+          <tr><td>🌏 <strong>{{ $t('region_asia') }}</strong></td><td>Z (ZBAA…), V (VHHH…), R (RJTT…), W, O</td></tr>
+          <tr><td>🌍 <strong>{{ $t('region_africa') }}</strong></td><td>D (DNMM…), F (FACT, FAOR…), G (GOOY…), H (HKJK…)</td></tr>
+          <tr><td>🌊 <strong>{{ $t('region_oceania') }}</strong></td><td>A (AYMH…), N (NZAA, NFFN…), Y (YSSY, YMML…)</td></tr>
+          <tr><td>🇺🇸 <strong>{{ $t('region_us') }}</strong></td><td>K (KJFK, KLAX…)</td></tr>
         </tbody>
       </table>
       <p>{{ $t('guide_qs_info') }}</p>

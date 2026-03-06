@@ -6,7 +6,7 @@
 ![PHP](https://img.shields.io/badge/PHP-8.1%2B-purple?style=flat-square)
 ![Laravel](https://img.shields.io/badge/Laravel-10%2F11-red?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![i18n](https://img.shields.io/badge/i18n-DE%20%7C%20EN-orange?style=flat-square)
+![i18n](https://img.shields.io/badge/i18n-DE%20%7C%20EN%20%7C%20ES%20%7C%20FR%20%7C%20IT%20%7C%20JA%20%7C%20PT%20%7C%20TR-orange?style=flat-square)
 
 ---
 
@@ -270,16 +270,30 @@ return [
 
 ## 🌐 Multi-Language Support
 
-The module supports **German (DE)** and **English (EN)** out of the box. The language switches automatically based on the phpVMS language setting (the flag selector in the top navigation bar).
+The module supports **German (DE)**, **English (EN)**, **Spanish (ES)**, **French (FR)**, **Italian (IT)**, **Japanese (JA)**, **Portuguese (PT/PT-BR)**, and **Turkish (TR)** out of the box. The language switches automatically based on the phpVMS language setting (the flag selector in the top navigation bar).
 
 ### Language Files
 
 ```
 Resources/lang/
 ├── de/
-│   └── pulse.php    ← ~130 translation keys (German)
-└── en/
-    └── pulse.php    ← ~130 translation keys (English)
+│   └── pulse.php    ← German
+├── en/
+│   └── pulse.php    ← English
+├── es/
+│   └── pulse.php    ← Spanish (Spain)
+├── fr/
+│   └── pulse.php    ← French
+├── it/
+│   └── pulse.php    ← Italian
+├── ja/
+│   └── pulse.php    ← Japanese
+├── pt/
+│   └── pulse.php    ← Portuguese (European, pt-PT)
+├── pt-br/
+│   └── pulse.php    ← Portuguese (Brazilian)
+└── tr/
+    └── pulse.php    ← Turkish
 ```
 
 ### How It Works
@@ -584,6 +598,39 @@ Contributions are welcome! Please:
 
 ## 📝 Changelog
 
+### v1.2.1 — Hotfix
+
+- **Portuguese folder renamed** — `lang/pt/` → `lang/pt-pt/` to correctly match the phpVMS locale code for European Portuguese. Brazilian Portuguese remains at `lang/pt-br/`.
+
+---
+
+### v1.2.0 — Bid System & Native Unit Integration
+
+#### ✨ New Features
+
+- **Quick Start Bid System** — The calendar icon on flight cards now places a real bid via phpVMS's `BidService` (AJAX, no page reload). Click again to remove. Fully bilingual.
+- **Toast Notifications** — Slide-in feedback top-right confirming bid placed/removed/error with flight number and route. Auto-disappears after 3.5 seconds.
+- **Native phpVMS Unit Casts** — All distance, fuel, and weight conversions now use phpVMS's built-in `App\Support\Units\Distance` and `Fuel` classes with automatic fallback to manual conversion for older builds.
+- **8 Languages** 🌍 — Complete translations for DE, EN, ES, FR, IT, JA, PT (European), PT-BR (Brazilian), and TR. Each with 260 translation keys.
+
+#### 🐛 Bugfixes
+
+- **Tooltip translation** — Quick Start book button tooltip was hardcoded German `"Buchen"`, now uses translation keys.
+- **Hardcoded distance unit** — Quick Start flight cards showed `"NM"` regardless of admin settings, now dynamic.
+- **`removeBid()` TypeError** — Removing a bid passed a `Bid` object instead of `(Flight, User)` to `BidService::removeBid()`.
+
+#### 📁 Files Changed
+
+- `Http/Routes/web.php` — Added `POST /bid/{flight_id}` route
+- `Http/Controllers/AirlineInfoPulseController.php` — `toggleBid()` method, native unit closures
+- `Helpers/PulseHelper.php` — `formatDistance()`, `formatFuel()`, `distanceValue()`, `fuelValue()` with phpVMS native class support
+- `Resources/views/index.blade.php` — Bid button, toast CSS + JS
+- `Resources/views/partials/*.blade.php` — All 6 partials updated to use native unit closures
+- `Resources/lang/en/pulse.php` — 4 new bid keys
+- `Resources/lang/de/pulse.php` — 4 new bid keys
+
+---
+
 ### v1.1.1 — Hotfix
 
 - **Landing rate display** — "Personal Record" mission now shows a proper negative value (−48 fpm) instead of a confusing positive one (48 fpm). The internal query uses `ABS()` for correct comparison, but the display now prepends the minus sign pilots expect. Same fix applied to Pilot Duel bars and comparison table.
@@ -669,7 +716,15 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ## 💚 Support This Project
 
-If Airline Info Pulse is useful to your virtual airline, consider buying me a coffee! Every donation helps fund continued development, new features, and bug fixes.
+AirlineInfoPulse is developed independently and maintained in my free time for the virtual aviation community.
+
+Developing and maintaining phpVMS modules requires many hours of development, testing, documentation, support, and maintenance.
+
+If this module helps your virtual airline, please consider supporting the project. Your support helps fund continued development, new features, bug fixes, development infrastructure, and long-term maintenance.
+
+Every contribution helps keep the project alive ❤️
+
+### ☕ Donate via PayPal
 
 [![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=7QEUD3PZLZPV2)
 
@@ -677,4 +732,12 @@ If Airline Info Pulse is useful to your virtual airline, consider buying me a co
 
 ---
 
-*Built with ❤️ for the virtual aviation community by [German Sky Group](https://german-sky-group.eu)*
+## ❤️ Author
+
+Developed for the **[German Sky Group](https://german-sky-group.eu)** Virtual Airline
+
+**Thomas Kant**
+
+Built on [phpVMS 7](https://github.com/nabeelio/phpvms) using the [nWidart Laravel Modules](https://github.com/nWidart/laravel-modules) framework.
+
+Issues and pull requests are welcome.
