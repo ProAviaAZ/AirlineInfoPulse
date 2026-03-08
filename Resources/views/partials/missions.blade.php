@@ -4,20 +4,25 @@
   $dailyGoal = $m['daily_goal'] ?? 3;
 @endphp
 
-<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 mt-4">
-  <div class="ap-section-label mb-0"><i class="ph-fill ph-target me-1"></i>{{ $t('missions') }}</div>
-  <div class="d-flex align-items-center gap-2">
-    <span style="font-size:0.72rem;color:var(--ap-muted);white-space:nowrap;"><i class="ph-fill ph-sword me-1"></i>{{ $t('compare_with') }}</span>
-    <select class="ap-select" id="ap-compare-pilot" style="min-width:220px;max-width:320px;">
-      <option value="">{{ $t('no_compare') }}</option>
-      @foreach($comparePilots as $cp)
-        <option value="{{ $cp['id'] }}">{{ $cp['name'] }} ({{ $cp['flights'] }} {{ $t('fl_short') }})</option>
-      @endforeach
-    </select>
+<div class="ap-glass mb-4 mt-4">
+  <div class="ap-glass-header">
+    <div class="d-flex align-items-center gap-2">
+      <i class="ph-fill ph-target" style="color:var(--ap-amber);font-size:1rem;"></i>
+      <span class="ap-card-title">{{ $t('missions') }}</span>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span style="font-size:0.72rem;color:var(--ap-muted);white-space:nowrap;"><i class="ph-fill ph-sword me-1"></i>{{ $t('compare_with') }}</span>
+      <select class="ap-select" id="ap-compare-pilot" style="min-width:220px;max-width:320px;">
+        <option value="">{{ $t('no_compare') }}</option>
+        @foreach($comparePilots as $cp)
+          <option value="{{ $cp['id'] }}">{{ $cp['name'] }} ({{ $cp['flights'] }} {{ $t('fl_short') }})</option>
+        @endforeach
+      </select>
+    </div>
   </div>
-</div>
+  <div style="padding:14px 18px;">
 
-<div class="ap-mission-grid ap-stagger mb-4" id="ap-mission-grid">
+<div class="ap-mission-grid ap-stagger" id="ap-mission-grid">
 
   {{-- Flight Streak --}}
   <div class="ap-mission-card" data-accent="streak">
@@ -137,6 +142,8 @@
   </div>
 
 </div>
+  </div>{{-- /padding --}}
+</div>{{-- /ap-glass missions --}}
 
 {{-- ── Duel Comparison Table ── --}}
 <div id="ap-compare-table" class="ap-glass mb-4" style="display:none;">

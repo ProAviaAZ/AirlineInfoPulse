@@ -647,6 +647,7 @@ Contributions are welcome! Please:
 - Config is read directly via `include` (no Laravel config cache issues)
 - Solid mode applies to **both** Dashboard and Pilot Guide
 - Topbar (title + filter buttons) wrapped in `ap-glass` panel for readability on background images
+- Missions section wrapped in `ap-glass` panel with header bar, consistent with all other sections
 
 #### 🧹 Code Cleanup
 
