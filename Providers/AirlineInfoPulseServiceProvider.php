@@ -7,7 +7,7 @@ use App\Contracts\Modules\ServiceProvider;
 class AirlineInfoPulseServiceProvider extends ServiceProvider
 {
     /**
-     * Modul-Name
+     * Module name
      */
     protected $moduleName = 'AirlineInfoPulse';
 
@@ -16,7 +16,6 @@ class AirlineInfoPulseServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerConfig();
         $this->registerViews();
         $this->registerTranslations();
         $this->registerRoutes();
@@ -27,14 +26,6 @@ class AirlineInfoPulseServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
-    }
-
-    /**
-     * Konfiguration registrieren
-     */
-    protected function registerConfig(): void
-    {
         $this->mergeConfigFrom(
             __DIR__ . '/../Config/config.php',
             'airlineinfopulse'
@@ -42,7 +33,7 @@ class AirlineInfoPulseServiceProvider extends ServiceProvider
     }
 
     /**
-     * Views registrieren
+     * Register views
      */
     protected function registerViews(): void
     {
@@ -62,7 +53,7 @@ class AirlineInfoPulseServiceProvider extends ServiceProvider
     }
 
     /**
-     * Übersetzungen registrieren (de/en)
+     * Register translations
      */
     protected function registerTranslations(): void
     {
@@ -77,7 +68,7 @@ class AirlineInfoPulseServiceProvider extends ServiceProvider
     }
 
     /**
-     * Routes registrieren
+     * Register routes
      */
     protected function registerRoutes(): void
     {

@@ -19,7 +19,7 @@
 
 <div class="ap-mission-grid ap-stagger mb-4" id="ap-mission-grid">
 
-  {{-- Flug-Streak --}}
+  {{-- Flight Streak --}}
   <div class="ap-mission-card" data-accent="streak">
     <div class="ap-mission-icon ic-streak"><i class="ph-fill ph-fire"></i></div>
     <div class="ap-mission-title">{{ $t('flight_streak') }}</div>
@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  {{-- Nächster Meilenstein --}}
+  {{-- Next Milestone --}}
   @if($m['next_milestone'])
     <div class="ap-mission-card" data-accent="milestone">
       <div class="ap-mission-icon ic-milestone"><i class="ph-fill ph-medal"></i></div>
@@ -47,7 +47,7 @@
     </div>
   @endif
 
-  {{-- Dein Ranking --}}
+  {{-- Your Ranking --}}
   @if($m['rank'])
     <div class="ap-mission-card" data-accent="rank">
       <div class="ap-mission-icon ic-rank"><i class="ph-fill ph-trophy"></i></div>
@@ -69,7 +69,7 @@
     <div class="ap-mission-sub">{{ $t('fly_new') }}</div>
   </div>
 
-  {{-- Flottentypen --}}
+  {{-- Fleet Types --}}
   <div class="ap-mission-card" data-accent="aircraft">
     <div class="ap-mission-icon ic-aircraft"><i class="ph-fill ph-airplane-tilt"></i></div>
     <div class="ap-mission-title">{{ $t('fleet_types') }}</div>
@@ -77,7 +77,7 @@
     <div class="ap-mission-sub">{{ $t('try_new_type') }}</div>
   </div>
 
-  {{-- Beste Landung --}}
+  {{-- Best Landing --}}
   @if($m['best_landing'])
     <div class="ap-mission-card" data-accent="landing">
       <div class="ap-mission-icon ic-landing"><i class="ph-fill ph-gauge"></i></div>
@@ -87,7 +87,7 @@
     </div>
   @endif
 
-  {{-- Tages-Challenge --}}
+  {{-- Daily Challenge --}}
   <div class="ap-mission-card" data-accent="daily">
     <div class="ap-mission-icon ic-daily"><i class="ph-fill ph-lightning"></i></div>
     <div class="ap-mission-title">{{ $t('daily_challenge') }}</div>
@@ -101,7 +101,7 @@
     <div class="ap-mission-progress"><div class="ap-mission-progress-bar" style="width:{{ $dailyPct }}%;background:linear-gradient(90deg, #ec4899, #f472b6);"></div></div>
   </div>
 
-  {{-- Längster Flug --}}
+  {{-- Longest Flight --}}
   @if(($m['longest_flight'] ?? 0) > 0)
     <div class="ap-mission-card" data-accent="distance">
       <div class="ap-mission-icon ic-distance"><i class="ph-fill ph-path"></i></div>
@@ -124,7 +124,7 @@
     <div class="ap-mission-progress"><div class="ap-mission-progress-bar" style="width:{{ $airPct }}%;background:linear-gradient(90deg, #f59e0b, #fbbf24);"></div></div>
   </div>
 
-  {{-- Wochenend-Pilot --}}
+  {{-- Weekend Pilot --}}
   <div class="ap-mission-card" data-accent="weekend">
     <div class="ap-mission-icon ic-weekend"><i class="ph-fill ph-sun-horizon"></i></div>
     <div class="ap-mission-title">{{ $t('weekend_pilot') }}</div>
@@ -138,7 +138,7 @@
 
 </div>
 
-{{-- ── Duell-Vergleichstabelle ── --}}
+{{-- ── Duel Comparison Table ── --}}
 <div id="ap-compare-table" class="ap-glass mb-4" style="display:none;">
   <div class="ap-glass-header">
     <div class="d-flex align-items-center gap-2">

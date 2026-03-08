@@ -99,9 +99,28 @@ $dailyFlights = $gc['daily_goal_flights'] ?? 3;
   .apg-table { font-size: 0.78rem; }
   .apg-table th, .apg-table td { padding: 6px 8px; }
 }
+
+/* Solid mode — colors from Config/config.php */
+.apg-wrap:not(.apg-glass-mode) .apg-card,
+.apg-wrap:not(.apg-glass-mode) .apg-toc a,
+.apg-wrap:not(.apg-glass-mode) .apg-note { background: {{ $solidColors['card_light'] }} !important; border-color: {{ $solidColors['border_light'] }} !important; }
+[data-bs-theme="dark"] .apg-wrap:not(.apg-glass-mode) .apg-card,
+[data-bs-theme="dark"] .apg-wrap:not(.apg-glass-mode) .apg-toc a,
+[data-bs-theme="dark"] .apg-wrap:not(.apg-glass-mode) .apg-note,
+.dark .apg-wrap:not(.apg-glass-mode) .apg-card,
+.dark .apg-wrap:not(.apg-glass-mode) .apg-toc a,
+.dark .apg-wrap:not(.apg-glass-mode) .apg-note,
+[data-theme="dark"] .apg-wrap:not(.apg-glass-mode) .apg-card,
+[data-theme="dark"] .apg-wrap:not(.apg-glass-mode) .apg-toc a,
+[data-theme="dark"] .apg-wrap:not(.apg-glass-mode) .apg-note { background: {{ $solidColors['card'] }} !important; border-color: {{ $solidColors['border'] }} !important; }
+@media (prefers-color-scheme: dark) {
+  .apg-wrap:not(.apg-glass-mode) .apg-card,
+  .apg-wrap:not(.apg-glass-mode) .apg-toc a,
+  .apg-wrap:not(.apg-glass-mode) .apg-note { background: {{ $solidColors['card'] }} !important; border-color: {{ $solidColors['border'] }} !important; }
+}
 </style>
 
-<div class="apg-wrap">
+<div class="apg-wrap{{ $glassMode ? ' apg-glass-mode' : '' }}">
 
   {{-- Back link --}}
   <a href="{{ url('/airline-info-pulse') }}" class="apg-back">
@@ -372,6 +391,10 @@ $dailyFlights = $gc['daily_goal_flights'] ?? 3;
     <a href="{{ url('/airline-info-pulse') }}" class="apg-back" style="font-size:0.9rem;">
       <i class="ph-fill ph-arrow-left"></i> {{ $t('back_to_dashboard') }}
     </a>
+  </div>
+
+  <div style="text-align:center;padding:8px 0 16px;font-size:0.72rem;color:var(--apg-text-sub);letter-spacing:0.02em;">
+    Airline Pulse — crafted with ♥ in Germany by <a href="https://github.com/MANFahrer-GF" target="_blank" rel="noopener" style="color:var(--apg-cyan);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Thomas Kant</a>
   </div>
 
 </div>

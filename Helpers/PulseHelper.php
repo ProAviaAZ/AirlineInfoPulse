@@ -310,7 +310,7 @@ class PulseHelper
     }
 
     /**
-     * Delta-Badge berechnen (Veränderung in Prozent)
+     * Calculate delta badge (percentage change)
      */
     public static function calculateDelta($current, $previous): array
     {
@@ -339,7 +339,7 @@ class PulseHelper
         $abs = abs($rate);
 
         if ($abs <= 299) {
-            return 'success';  // grün
+            return 'success';  // green
         }
         if ($abs <= 499) {
             return 'warning';  // orange
@@ -360,7 +360,7 @@ class PulseHelper
     }
 
     /**
-     * Flug-Streak berechnen (aufeinanderfolgende Tage mit Flügen)
+     * Calculate flight streak (consecutive days with flights)
      */
     public static function calculateStreak(array $flightDates): int
     {
@@ -377,7 +377,7 @@ class PulseHelper
         $streak  = 0;
         $current = Carbon::today();
 
-        // Rückwärts ab heute zählen
+        // Count backwards from today
         while ($dates->contains($current->format('Y-m-d'))) {
             $streak++;
             $current->subDay();
@@ -387,7 +387,7 @@ class PulseHelper
     }
 
     /**
-     * Filter-Label für die Anzeige
+     * Filter label for display
      */
     public static function filterLabel(string $filter): string
     {
@@ -404,10 +404,10 @@ class PulseHelper
     }
 
     /**
-     * DSGVO / GDPR: Name kürzen → "First L."
+     * GDPR: Shorten name → "First L."
      * "Dan Evans" → "Dan E."
      * "Thomas Kantt" → "Thomas K."
-     * Einwort-Namen bleiben unverändert.
+     * Single-word names remain unchanged.
      */
     public static function shortName(?string $fullName): string
     {

@@ -1,7 +1,7 @@
 {{-- partials/toplists.blade.php --}}
 <div class="row g-3">
 
-  {{-- ═══ TOP PILOTEN ═══ --}}
+  {{-- ═══ TOP PILOTS ═══ --}}
   <div class="col-12 col-lg-6">
     <div class="ap-glass h-100">
       <div class="ap-glass-header">

@@ -379,6 +379,42 @@ The module automatically detects your theme's dark/light mode via multiple strat
 
 A `MutationObserver` watches for real-time theme changes — if the user toggles dark mode, the dashboard updates instantly without page reload.
 
+### Glass Mode vs. Solid Mode
+
+The dashboard supports two visual modes, controlled via `Config/config.php`:
+
+```php
+// Glass (default) — translucent blur effect on cards
+'glass_mode' => true,
+
+// Solid — opaque card backgrounds for themes with background images
+'glass_mode' => false,
+```
+
+**Glass Mode** works with all standard phpVMS themes. Cards have a subtle `backdrop-filter: blur()` effect.
+
+**Solid Mode** is for themes that use background images (wallpapers, photos) where the image would shine through translucent cards. All card backgrounds become fully opaque.
+
+When `glass_mode` is set to `false`, you can customize the card colors directly in `config.php`:
+
+```php
+// Dark theme colors
+'solid_card'   => '#1a1f2e',   // Card / panel background
+'solid_border' => '#2a3040',   // Card border color
+'solid_select' => '#1e2535',   // Dropdown / select background
+'solid_kpi'    => '#171c28',   // KPI tile background
+'solid_accent' => '#3b82f6',   // Active button highlight color
+
+// Light theme colors
+'solid_card_light'   => '#ffffff',
+'solid_border_light' => '#e2e8f0',
+'solid_select_light' => '#f1f5f9',
+'solid_kpi_light'    => '#f8fafc',
+'solid_accent_light' => '#3b82f6',
+```
+
+These colors apply to both the Dashboard and the Pilot Guide. The solid color values are only used when `glass_mode` is `false` — they have no effect in Glass mode.
+
 ### Custom CSS Variables
 
 All colors are controlled via CSS custom properties in `index.blade.php`. You can override them in your theme:
@@ -598,9 +634,45 @@ Contributions are welcome! Please:
 
 ## 📝 Changelog
 
-### v1.2.1 — Hotfix
+### v1.2.2 — Glass / Solid Mode & Config Overhaul
 
-- **Portuguese folder renamed** — `lang/pt/` → `lang/pt-pt/` to correctly match the phpVMS locale code for European Portuguese. Brazilian Portuguese remains at `lang/pt-br/`.
+#### 🎨 Glass / Solid Design Mode
+
+- **Glass Mode** (default) — Translucent cards with `backdrop-filter: blur()`. No change for standard themes.
+- **Solid Mode** (opt-in via `config.php`) — Fully opaque card backgrounds with `!important` overrides. For themes with background images (wallpapers, photos) that shine through the cards.
+- All settings in `Config/config.php` — no CSS editing needed:
+  - `glass_mode` — `true` (glass) or `false` (solid)
+  - `solid_card` / `solid_border` / `solid_select` / `solid_kpi` / `solid_accent` — dark mode colors
+  - `solid_card_light` / `solid_border_light` / `solid_select_light` / `solid_kpi_light` / `solid_accent_light` — light mode colors
+- Config is read directly via `include` (no Laravel config cache issues)
+- Solid mode applies to **both** Dashboard and Pilot Guide
+- Topbar (title + filter buttons) wrapped in `ap-glass` panel for readability on background images
+
+#### 🧹 Code Cleanup
+
+- All PHP/Blade comments translated to English (Controller, PulseHelper, ServiceProvider, all partials)
+- `Config/config.php` fully in English
+- `mergeConfigFrom()` moved from `boot()` to `register()` in ServiceProvider
+- Author footer added to Dashboard and Pilot Guide with GitHub link
+
+---
+
+### v1.2.1 — 9 Languages, Africa & Oceania
+
+#### 🌍 New Languages
+
+- **7 new translations** — Spanish (ES), French (FR), Italian (IT), Japanese (JA), Portuguese European (PT-PT), Portuguese Brazilian (PT-BR), and Turkish (TR). Each with 260 keys.
+- The module now supports **9 languages** matching all phpVMS-supported locales.
+
+#### 🌍 New Quick Start Regions
+
+- **Africa** (ICAO prefixes D, F, G, H) and **Oceania** (A, N, Y) added as filter buttons.
+- Quick Start now covers 5 regions: Europe, Asia, Africa, Oceania, USA.
+- Pilot Guide region table updated with new regions and translated labels.
+
+#### 🐛 Fix
+
+- **Portuguese locale folder** renamed from `lang/pt/` to `lang/pt-pt/` to match the phpVMS locale code.
 
 ---
 

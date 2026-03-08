@@ -18,37 +18,39 @@ return [
     'weight_unit'   => 'kg',
 
     /**
-     * Tagesziel in Minuten (Standard: 4 Stunden = 240 Minuten)
+     * Daily flight hour goal in minutes (default: 4 hours = 240 minutes)
+     * Used for the cockpit progress bar. Multiplied by the number of days
+     * in the selected period.
      */
     'daily_goal_minutes' => 240,
 
     /**
-     * Meilenstein-Stufen für die "Nächster Meilenstein" Mission
+     * Milestone levels for the "Next Milestone" mission
      */
     'milestones' => [10, 25, 50, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 5000],
 
     /**
-     * Tages-Challenge: Anzahl Flüge für die tägliche Challenge
+     * Daily Challenge: number of flights to complete per day
      */
     'daily_challenge_flights' => 3,
 
     /**
-     * Schnellstart: Maximale Anzahl zufälliger Routen
+     * Quick Start: maximum number of random routes loaded
      */
     'quickstart_max_routes' => 200,
 
     /**
-     * CO2-Umrechnungsfaktor (kg Fuel → kg CO2)
+     * CO2 conversion factor (kg fuel → kg CO2)
      */
     'co2_factor' => 3.16,
 
     /**
-     * Landing Rate Schwellenwerte (fpm)
+     * Landing rate color thresholds (fpm, negative values)
      */
     'landing_rate_thresholds' => [
-        'green'  => -299,   // 0 bis -299 = grün (butterweich)
-        'orange' => -499,   // -300 bis -499 = orange (ok)
-        // alles darunter = rot (hart)
+        'green'  => -299,   // 0 to -299 = green (butter landing)
+        'orange' => -499,   // -300 to -499 = orange (acceptable)
+        // everything below = red (hard landing)
     ],
 
     /**
@@ -107,17 +109,43 @@ return [
     'min_landing_rate' => 5,
 
     /**
-     * Anzahl der Top-Einträge (Piloten / Aircraft)
+     * Number of entries in Top Pilots / Top Aircraft lists
      */
     'top_limit' => 10,
 
     /**
-     * Anzahl Feed-Einträge
+     * Number of entries in the Activity Feed
      */
     'feed_limit' => 25,
 
     /**
-     * Anzahl Airline Snapshot Top-Karten
+     * Number of large Airline Snapshot cards
      */
     'snapshot_top_count' => 4,
+
+    /**
+     * ─── DESIGN MODE ───────────────────────────────────────────────
+     *
+     * true  = Glass (default). Cards have a subtle blur effect.
+     *         Works with all standard phpVMS themes.
+     *
+     * false = Solid. Cards get opaque backgrounds (colors below).
+     *         Use this if your theme has a background image that
+     *         shines through the dashboard cards.
+     */
+    'glass_mode' => true,
+
+    // Solid mode card colors (dark theme) — only used when glass_mode = false
+    'solid_card'   => '#1a1f2e',
+    'solid_border' => '#2a3040',
+    'solid_select' => '#1e2535',
+    'solid_kpi'    => '#171c28',
+    'solid_accent' => '#3b82f6',   // Active button / highlight color
+
+    // Solid mode card colors (light theme) — only used when glass_mode = false
+    'solid_card_light'   => '#ffffff',
+    'solid_border_light' => '#e2e8f0',
+    'solid_select_light' => '#f1f5f9',
+    'solid_kpi_light'    => '#f8fafc',
+    'solid_accent_light' => '#3b82f6',
 ];

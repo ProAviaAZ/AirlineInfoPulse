@@ -67,13 +67,13 @@ class AirlineInfoPulseController extends Controller
         return self::$schemaCache[$key];
     }
 
-    /** Prefixed table name für Raw-SQL (z.B. 'phpvmspireps') */
+    /** Prefixed table name for raw SQL (e.g. 'phpvmspireps') */
     private function t(string $table): string
     {
         return $this->pfx . $table;
     }
 
-    /** Sichere airline SELECT-Spalten für ->select() (prefix handled by Laravel) */
+    /** Safe airline SELECT columns for ->select() (prefix handled by Laravel) */
     private function airlineSelectCols(string $prefix = 'air'): array
     {
         $cols = [];
@@ -83,7 +83,7 @@ class AirlineInfoPulseController extends Controller
         return $cols;
     }
 
-    /** Airline SELECT-Spalten für selectRaw() (prefix NICHT handled by Laravel) */
+    /** Airline SELECT columns for selectRaw() (prefix NOT handled by Laravel) */
     private function airlineSelectRaw(string $prefix = 'air'): string
     {
         $parts = [];
@@ -112,7 +112,7 @@ class AirlineInfoPulseController extends Controller
 
     public function index(Request $request)
     {
-        // Input-Validierung — Whitelist für filter
+        // Input validation — whitelist for filter
         $filter = in_array($request->get('filter'), self::VALID_FILTERS) ? $request->get('filter') : 'today';
 
         // Custom-Dates sicher parsen (nur Y-m-d akzeptieren)
@@ -125,7 +125,7 @@ class AirlineInfoPulseController extends Controller
                 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawStart)) $customStart = $rawStart;
                 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawEnd)) $customEnd = $rawEnd;
             } catch (\Throwable $e) {
-                $filter = 'today'; // Fallback bei ungültigen Dates
+                $filter = 'today'; // Fallback for invalid dates
             }
         }
 
@@ -193,6 +193,22 @@ class AirlineInfoPulseController extends Controller
         $fuelVal = fn(float $lbs) => PulseHelper::fuelValue($lbs, $this->units);
         $effVal  = fn(float $lbsPerNm) => PulseHelper::convertEfficiency($lbsPerNm, $this->units);
 
+        // Design mode — read directly from file (bypasses Laravel config cache)
+        $mc = include __DIR__ . '/../../Config/config.php';
+        $glassMode   = $mc['glass_mode'] ?? true;
+        $solidColors = [
+            'card'         => $mc['solid_card']         ?? '#1a1f2e',
+            'border'       => $mc['solid_border']       ?? '#2a3040',
+            'select'       => $mc['solid_select']       ?? '#1e2535',
+            'kpi'          => $mc['solid_kpi']           ?? '#171c28',
+            'accent'       => $mc['solid_accent']       ?? '#3b82f6',
+            'card_light'   => $mc['solid_card_light']   ?? '#ffffff',
+            'border_light' => $mc['solid_border_light'] ?? '#e2e8f0',
+            'select_light' => $mc['solid_select_light'] ?? '#f1f5f9',
+            'kpi_light'    => $mc['solid_kpi_light']    ?? '#f8fafc',
+            'accent_light' => $mc['solid_accent_light'] ?? '#3b82f6',
+        ];
+
         return view('airlineinfopulse::index', compact(
             'filter', 'customStart', 'customEnd', 'pilotSort', 'acSort',
             'showAllPilots', 'showAllAc',
@@ -204,7 +220,8 @@ class AirlineInfoPulseController extends Controller
             'quickstartJson',
             'feed', 'snapshot', 'prevSnapshot',
             'user', 'shortName', 'units',
-            'fmtDist', 'fmtFuel', 'distVal', 'fuelVal', 'effVal'
+            'fmtDist', 'fmtFuel', 'distVal', 'fuelVal', 'effVal',
+            'glassMode', 'solidColors'
         ));
     }
 
@@ -226,7 +243,17 @@ class AirlineInfoPulseController extends Controller
             'daily_goal_flights' => (int) config('airlineinfopulse.daily_challenge_flights', 3),
         ];
 
-        return view('airlineinfopulse::guide', compact('units', 'guideConfig'));
+        // Design mode
+        $mc = include __DIR__ . '/../../Config/config.php';
+        $glassMode   = $mc['glass_mode'] ?? true;
+        $solidColors = [
+            'card'         => $mc['solid_card']         ?? '#1a1f2e',
+            'border'       => $mc['solid_border']       ?? '#2a3040',
+            'card_light'   => $mc['solid_card_light']   ?? '#ffffff',
+            'border_light' => $mc['solid_border_light'] ?? '#e2e8f0',
+        ];
+
+        return view('airlineinfopulse::guide', compact('units', 'guideConfig', 'glassMode', 'solidColors'));
     }
 
     /**
@@ -269,7 +296,7 @@ class AirlineInfoPulseController extends Controller
             $bidSvc = app($svcClass);
             $bidSvc->addBid($flight, $user);
 
-            // Flug-Info für Toast zurückgeben
+            // Return flight info for toast
             $fltNr = '';
             if (isset($flight->airline)) {
                 $fltNr = ($flight->airline->icao ?? '') . ' ' . ($flight->flight_number ?? '');
@@ -369,7 +396,7 @@ class AirlineInfoPulseController extends Controller
     }
 
     // ═══════════════════════════════════════════════════════════════
-    //  PRIVATE QUERY METHODS — alle über DB::table()
+    //  PRIVATE QUERY METHODS — all via DB::table()
     // ═══════════════════════════════════════════════════════════════
 
     private function getKpis(array $range): array
@@ -484,7 +511,7 @@ class AirlineInfoPulseController extends Controller
         $nextMilestone = collect($milestones)->first(fn($m) => $m > $totalFlights) ?? end($milestones);
         $milestoneDiff = max(0, $nextMilestone - $totalFlights);
 
-        // Ranking — effizient: nur zählen wer mehr Flüge hat (kein volles Ranking laden)
+        // Ranking — efficient: only count who has more flights (no full ranking load)
         $totalPilots = DB::table('pireps')->where('state', PirepState::ACCEPTED)
             ->distinct('user_id')->count('user_id');
         $userRank = DB::table('pireps')->where('state', PirepState::ACCEPTED)
@@ -842,7 +869,7 @@ class AirlineInfoPulseController extends Controller
                 $logo = str_starts_with($airLogo, 'http') ? $airLogo : url($airLogo);
             }
 
-            // Subfleets für diesen Flug (max 3 anzeigen)
+            // Subfleets for this flight (max 3 shown)
             $subfleets = array_slice(array_unique($sfMap[$f->id] ?? []), 0, 3);
 
             return [
@@ -933,7 +960,7 @@ class AirlineInfoPulseController extends Controller
         }
 
         // Maintenance — DisposableBasic: Echte Check-Events via last_note
-        // updated_at = wann Record geändert wurde, last_note = Check-Typ (z.B. "Hard Landing Check")
+        // updated_at = when record was modified, last_note = check type (e.g. "Hard Landing Check")
         $mxTbl = null;
         foreach (['disposable_maintenance', 'disposable_maintenances'] as $candidate) {
             if ($this->schemaHasTable($candidate)) { $mxTbl = $candidate; break; }
@@ -966,7 +993,7 @@ class AirlineInfoPulseController extends Controller
 
             // Filtern: last_note nicht leer UND Timestamp im Zeitraum
             // Wichtig: Filter muss dieselbe Spalte nutzen wie die Anzeige ($tsCol),
-            // sonst erscheinen alte Checks im Feed wenn DisposableSpecial updated_at ändert
+            // otherwise old checks appear in feed when DisposableSpecial updates updated_at
             $filterCol = $mxTbl.'.'.$tsCol;
             $mxQ = DB::table($mxTbl)
                 ->whereNotNull($mxTbl.'.last_note')
@@ -1016,7 +1043,7 @@ class AirlineInfoPulseController extends Controller
         $p = $this->t('pireps');     // z.B. 'phpvmspireps'
         $a = $this->t('airlines');   // z.B. 'phpvmsairlines'
         $airSelectRaw = $this->airlineSelectRaw();
-        $airGroupCols = $this->airlineGroupCols();  // unprefixed für groupBy()
+        $airGroupCols = $this->airlineGroupCols();  // unprefixed for groupBy()
 
         $rows = DB::table('pireps')
             ->join('airlines', 'pireps.airline_id', '=', 'airlines.id')

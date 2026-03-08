@@ -186,7 +186,39 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
 .ap-mono { font-family: var(--ap-font-mono); font-variant-numeric: lining-nums tabular-nums; }
 
 /* ── Glass Card ── */
-.ap-glass { background: var(--ap-surface); border: 1px solid var(--ap-border); border-radius: 16px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: border-color 0.2s, box-shadow 0.2s; }
+.ap-glass { background: var(--ap-surface); border: 1px solid var(--ap-border); border-radius: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+/* Glass mode (default): backdrop-filter on cards. Remove .ap-glass-mode from .ap-wrap for solid mode. */
+.ap-glass-mode .ap-glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+/* ── Solid Mode ──────────────────────────────────────────────────────
+   Colors are loaded from Config/config.php                            */
+.ap-wrap:not(.ap-glass-mode) {
+  --ap-solid-card:   {{ $solidColors['card'] }};
+  --ap-solid-border: {{ $solidColors['border'] }};
+  --ap-solid-select: {{ $solidColors['select'] }};
+  --ap-solid-kpi:    {{ $solidColors['kpi'] }};
+  --ap-solid-accent: {{ $solidColors['accent'] }};
+}
+.ap-wrap:not(.ap-glass-mode) .ap-glass,
+.ap-wrap:not(.ap-glass-mode) .ap-kpi,
+.ap-wrap:not(.ap-glass-mode) .ap-mission-card,
+.ap-wrap:not(.ap-glass-mode) .ap-route-card,
+.ap-wrap:not(.ap-glass-mode) .ap-rank-item,
+.ap-wrap:not(.ap-glass-mode) .ap-asnap-featured { background: var(--ap-solid-card) !important; border-color: var(--ap-solid-border) !important; }
+.ap-wrap:not(.ap-glass-mode) .ap-kpi { background: var(--ap-solid-kpi) !important; }
+.ap-wrap:not(.ap-glass-mode) .ap-select,
+.ap-wrap:not(.ap-glass-mode) .ap-filter-pill { background: var(--ap-solid-select) !important; }
+.ap-wrap:not(.ap-glass-mode) .ap-filter-pill button.active { background: var(--ap-solid-accent) !important; }
+.ap-wrap:not(.ap-glass-mode) .ap-region-btn.active { background: var(--ap-solid-accent) !important; border-color: var(--ap-solid-accent) !important; }
+
+/* Light solid mode */
+html.ap-light .ap-wrap:not(.ap-glass-mode) {
+  --ap-solid-card:   {{ $solidColors['card_light'] }};
+  --ap-solid-border: {{ $solidColors['border_light'] }};
+  --ap-solid-select: {{ $solidColors['select_light'] }};
+  --ap-solid-kpi:    {{ $solidColors['kpi_light'] }};
+  --ap-solid-accent: {{ $solidColors['accent_light'] }};
+}
 .ap-glass:hover { border-color: var(--ap-border2); }
 .ap-glass-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--ap-border); }
 
@@ -365,7 +397,7 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
 .ap-route-card:hover { border-color: rgba(34,211,238,0.35); background: rgba(34,211,238,0.05); }
 .ap-route-icao { font-family: var(--ap-font-head); font-size: 0.9rem; font-weight: 700; color: var(--ap-text-head); }
 
-/* ── Schnellstart ── */
+/* ── Quick Start ── */
 .ap-qs-flightnr { font-family: var(--ap-font-mono); font-size: 0.68rem; color: var(--ap-cyan); font-weight: 600; }
 .ap-qs-booked { display: inline-flex; align-items: center; gap: 3px; font-family: var(--ap-font-mono); font-size: 0.6rem; color: var(--ap-green); font-weight: 600; }
 .ap-qs-action-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--ap-border); background: transparent; color: var(--ap-muted); font-size: 0.82rem; cursor: pointer; transition: all 0.2s; text-decoration: none; }
@@ -373,7 +405,8 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
 .ap-qs-book-btn:hover { color: var(--ap-cyan); border-color: var(--ap-cyan); }
 .ap-qs-book-btn:disabled { cursor: wait; opacity: 0.5; }
 /* Toast */
-.ap-toast { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: 12px; border: 1px solid var(--ap-border); background: var(--ap-surface); backdrop-filter: blur(16px); color: var(--ap-text-head); font-family: var(--ap-font-body); font-size: 0.85rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); transform: translateX(120%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s; opacity: 0; }
+.ap-toast { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-radius: 12px; border: 1px solid var(--ap-border); background: var(--ap-surface); color: var(--ap-text-head); font-family: var(--ap-font-body); font-size: 0.85rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3); transform: translateX(120%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s; opacity: 0; }
+.ap-glass-mode .ap-toast { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .ap-toast.ap-toast-show { transform: translateX(0); opacity: 1; }
 .ap-toast-icon { font-size: 1.2rem; flex-shrink: 0; }
 .ap-toast-body { display: flex; flex-direction: column; gap: 2px; }
@@ -420,10 +453,10 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
 </style>
 
 {{-- ═══ LAYOUT ═══ --}}
-<div class="ap-wrap" style="padding: 20px 0;">
+<div class="ap-wrap{{ $glassMode ? ' ap-glass-mode' : '' }}" style="padding: 20px 0;">
 
   {{-- ── TOPBAR ── --}}
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div class="ap-glass d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4" style="padding:14px 18px;">
     <div class="d-flex align-items-center gap-3">
       <div>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -465,13 +498,17 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
     {{-- Mission Cards --}}
     @include('airlineinfopulse::partials.missions')
 
-    {{-- Schnellstart --}}
+    {{-- Quick Start --}}
     @include('airlineinfopulse::partials.quickstart')
 
     {{-- Airline Snapshot --}}
     @include('airlineinfopulse::partials.snapshot')
 
   </div>{{-- /ap-dynamic-content --}}
+
+  <div style="text-align:center;padding:24px 0 8px;font-size:0.72rem;color:var(--ap-muted);font-family:var(--ap-font-body);letter-spacing:0.02em;">
+    Airline Pulse — crafted with ♥ in Germany by <a href="https://github.com/MANFahrer-GF" target="_blank" rel="noopener" style="color:var(--ap-cyan);text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Thomas Kant</a>
+  </div>
 </div>
 
 {{-- ═══ JAVASCRIPT ═══ --}}
@@ -513,7 +550,7 @@ html.ap-light .ap-mission-icon.ic-daily { background: rgba(236,72,153,0.1); }
     window.location.href=newUrl;
   };
 
-  /* ═══ Schnellstart ═══ */
+  /* ═══ Quick Start ═══ */
   var allFlights={!! $quickstartJson !!};
   var currentRegion='eu';
 

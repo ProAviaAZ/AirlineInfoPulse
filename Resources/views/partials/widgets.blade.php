@@ -1,4 +1,4 @@
-{{-- partials/widgets.blade.php — Aktive Flüge + Buchungen Widgets --}}
+{{-- partials/widgets.blade.php — Active Flights + Bookings Widgets --}}
 <div class="mb-3">
   @widget('DBasic::FlightBoard')
 </div>
